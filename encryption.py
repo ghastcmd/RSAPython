@@ -78,15 +78,28 @@ def phi_lambda(p, q):
 
 # get p and q which are prime numbers
 def get_prime():
-  b = rnd.randint(10**10, 10**11)
+  b = rnd.randint(10**10, 10**12)
   return next_prime(b)
+
+# fast modular exponentiation function
+def fast_exp_mod(a, m, n):
+  if m == 0:
+    return 1
+  elif m % 2 == 0:
+    d = fast_exp_mod(a, m // 2, n)
+    return (d * d) % n
+  else:
+    rev = fast_exp_mod(a, m - 1, n)
+    return (a % n) * rev % n
 
 # RSA cryptography function
 def crypt_rsa(a, e, n):
+  return fast_exp_mod(a, e, n)
   return (a**e) % n
 
 # RSA decryptography function
 def decrypt_rsa(a, d, n):
+  return fast_exp_mod(a, d, n)
   return (a**d) % n
 
 # parses string of numbers to list of int
@@ -130,53 +143,20 @@ def string_dec(char, d, n):
 
 # returns the decryption key(generates it)
 def get_dec(p, q, e):
-  phi = (p-1)*(q-1)
+  phi = get_phi(p, q, e)
   return inv_mod(e, phi)
 
-# main calls
-# Testing the implementation
-'''
-p = 61
-q = 53
-e = 17
+if __name__ == '__main__':
+  print('Adquirindo números primos...')
+  p = get_prime()
+  q = get_prime()
+  while p == q:
+    p = get_prime()
+  
+  e = next_prime(rnd.randint(3, 50))
+  while get_phi(p, q, e) == False:
+    e = next_prime(e)
 
-n = p * q
-d = get_dec(p, q, e)
-
-print(d, n)
-
-lets = string_enc('ALELO VOADOR', e, n)
-print(lets)
-dec = string_dec(str(lets), d, n)
-dec = ''.join(dec)
-print(dec)
-
-alelo = lcm(7, 3)
-print('>>>>',alelo)
-
-p = 61
-q = 53
-e = 17
-
-#p = int(input('insira p primo: '))
-#q = int(input('insira q primo: '))
-#e = int(input('insira valor de e: '))
-
-
-phi = phi_lambda(p, q)
-d = inv_mod(e, phi)
-n = p * q
-
-char = input('Insira mensagem a ser criptografada: \n')
-
-string_enc(char, e, n)
-
-string = '1752 47 824 47 134 1075 2037 134 1752 3086 134 615 1075 1387 134 2549 1075 134 47 134 2369 134 1188 824 3023'
-
-string_dec(string, d, n)
-#string_dec(char, d, n)
-
-#print('phi>', phi, ' n>', n, ' d>', d)
-
-#input('Press enter to exit... ')
-'''
+  print('p primo: ', p)
+  print('q primo: ', q)
+  print('e primo: ', e)

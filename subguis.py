@@ -95,7 +95,6 @@ def cryptmens():
     with open('encrypted_msg.txt', 'w+') as arc:
       for a in nums:
         arc.write(f'{a} ')
-      arc.write('\b')
 
     for a in reversed(nums):
       text.insert(0.0, a)
